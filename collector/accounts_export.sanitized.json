@@ -1,0 +1,77 @@
+[
+  {
+    "email": "vekilovwdye95@outlook.com",
+    "account_id": "auth0|iTBm1mxyukfuQFSkWlmvoTcA::cgpt=ecf81673-6d03-4d5b-bb42-25cf6c081233|ws=org-xsaG3E8JsFcrOqlGfvLP04Zj",
+    "issuer": "https://auth.openai.com",
+    "group_name": "2teeam",
+    "status": "active",
+    "workspace_id": "org-xsaG3E8JsFcrOqlGfvLP04Zj",
+    "chatgpt_account_id": "ecf81673-6d03-4d5b-bb42-25cf6c081233",
+    "exported_at": "1774615159",
+    "token_preview": {
+      "access_token": "eyJhbG...8fdEf0",
+      "id_token": "eyJhbG...HngtNo",
+      "refresh_token": "oaistb...lPMips"
+    }
+  },
+  {
+    "email": "mehrnakatwal77@outlook.com",
+    "account_id": "auth0|CRi4sEReEilUsr8h8giLGSfB::cgpt=ecf81673-6d03-4d5b-bb42-25cf6c081233|ws=org-ByoawYb6zFQwLxyRjGlJIIJ9",
+    "issuer": "https://auth.openai.com",
+    "group_name": "2teeam",
+    "status": "active",
+    "workspace_id": "org-ByoawYb6zFQwLxyRjGlJIIJ9",
+    "chatgpt_account_id": "ecf81673-6d03-4d5b-bb42-25cf6c081233",
+    "exported_at": "1774615159",
+    "token_preview": {
+      "access_token": "eyJhbG...zhWfP8",
+      "id_token": "eyJhbG...xs-UX8",
+      "refresh_token": "oaistb...He5xaA"
+    }
+  },
+  {
+    "email": "tinocayalama33@outlook.com",
+    "account_id": "auth0|hl33EEqop2Xfu3Zkiz4vkjcc::cgpt=ecf81673-6d03-4d5b-bb42-25cf6c081233|ws=org-ZE6sI8mqnk2fbtzA07qBZD4g",
+    "issuer": "https://auth.openai.com",
+    "group_name": "2teeam",
+    "status": "active",
+    "workspace_id": "org-ZE6sI8mqnk2fbtzA07qBZD4g",
+    "chatgpt_account_id": "ecf81673-6d03-4d5b-bb42-25cf6c081233",
+    "exported_at": "1774615159",
+    "token_preview": {
+      "access_token": "eyJhbG...zNvX1w",
+      "id_token": "eyJhbG...KYWc1E",
+      "refresh_token": "oaistb...9WWoqY"
+    }
+  },
+  {
+    "email": "jegshaamdi1995@outlook.com",
+    "account_id": "auth0|UEHIYIJCK4k49wGOPKFGUmoB::cgpt=ecf81673-6d03-4d5b-bb42-25cf6c081233|ws=org-lfEHLilUVb628TS9Lrp3nb8L",
+    "issuer": "https://auth.openai.com",
+    "group_name": "2teeam",
+    "status": "active",
+    "workspace_id": "org-lfEHLilUVb628TS9Lrp3nb8L",
+    "chatgpt_account_id": "ecf81673-6d03-4d5b-bb42-25cf6c081233",
+    "exported_at": "1774615159",
+    "token_preview": {
+      "access_token": "eyJhbG...XSeHW0",
+      "id_token": "eyJhbG...NuT5j4",
+      "refresh_token": "oaistb...1-YHjA"
+    }
+  },
+  {
+    "email": "alexstudio.site@chihuolingrang.de5.net",
+    "account_id": "auth0|uLA1tiH4GjmvDlXpd7n6qWbm::cgpt=ecf81673-6d03-4d5b-bb42-25cf6c081233|ws=org-nGywtOYZwKbaoLkuANAvIdws",
+    "issuer": "https://auth.openai.com",
+    "group_name": "2teeam",
+    "status": "active",
+    "workspace_id": "org-nGywtOYZwKbaoLkuANAvIdws",
+    "chatgpt_account_id": "ecf81673-6d03-4d5b-bb42-25cf6c081233",
+    "exported_at": "1774615159",
+    "token_preview": {
+      "access_token": "eyJhbG..._fAY5U",
+      "id_token": "eyJhbG...ZJM8dI",
+      "refresh_token": "oaistb...JiD1hQ"
+    }
+  }
+]

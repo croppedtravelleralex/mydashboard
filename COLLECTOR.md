@@ -2,13 +2,15 @@
 
 `dashboard` 项目中 Ubuntu 采集器与前端/Pages 对接说明。
 
-## 核心策略
+## 核心目标
 
-当前 Cloudflare Pages 项目先使用静态文件：
+本项目的真实目标不是简单显示一个总额度，而是做 **ChatGPT / OpenAI 账号池的 5h / 7d 可用额度监控**。
 
-- `public/api/openai-usage.json`
-
-后续真实接入时，Ubuntu 采集器只需要持续产出**同结构 JSON**，就能直接替换当前 mock 数据源，无需大改前端。
+参考来源：`qxcnm/Codex-Manager`
+但只借鉴：
+- 账号池监控视角
+- 5h 与 7d 两个额度窗口
+- 剩余百分比 / 已使用百分比 / 重置时间
 
 ## 当前替换路径
 
@@ -19,89 +21,111 @@
 发布前同步到：
 - `public/api/openai-usage.json`
 
-这样 Pages 继续走静态部署，但页面读到的是准实时采集结果。
-
 ### 方案 B：后续接真实后端接口
 后端接口：
 - `GET /api/openai-usage`
 
 返回结构保持与静态 JSON 一致。
 
-## Ubuntu 采集器输出契约
+## Ubuntu 采集器输出契约（账号池版）
 
-输出文件必须为 UTF-8 JSON，字段结构必须兼容：
+输出文件必须为 UTF-8 JSON，字段结构兼容 `API.md`。
+
+### 最低要求
+
+采集器至少应输出：
+1. 账号总数
+2. 可用账号数
+3. 每个账号的 5h 剩余额度
+4. 每个账号的 7d 剩余额度
+5. 两个窗口的重置时间
+6. 采集时间
+7. 最近采集记录
+
+## 单账号字段契约
 
 ```json
 {
-  "ok": true,
-  "source": "ubuntu-collector",
-  "generated_at": "2026-03-27T20:30:00+08:00",
+  "id": "account-001",
+  "name": "team-account-a",
+  "status": "ok",
+  "captured_at": "2026-03-27T20:18:43+08:00",
   "quota": {
     "window_5h": {
-      "remaining_percent": 72.8,
-      "used_percent": 27.2,
+      "remaining_percent": 68.4,
+      "used_percent": 31.6,
+      "resets_at": "2026-03-27T23:40:00+08:00",
       "status": "healthy"
     },
     "window_7d": {
-      "remaining_percent": 66.5,
-      "used_percent": 33.5,
+      "remaining_percent": 74.1,
+      "used_percent": 25.9,
+      "resets_at": "2026-03-30T00:00:00+08:00",
       "status": "healthy"
     }
   },
   "collector": {
     "status": "ok",
-    "message": "collector finished successfully",
-    "last_run_at": "2026-03-27T20:28:43+08:00"
-  },
-  "recent_runs": [
-    {
-      "id": "collector-run-001",
-      "status": "success",
-      "finished_at": "2026-03-27T20:28:43+08:00"
-    }
-  ],
-  "errors": []
+    "message": "collector finished successfully"
+  }
 }
 ```
 
-## 字段约束
-
-### 顶层
-- `ok`: 布尔值
-- `source`: 建议固定为 `ubuntu-collector`
-- `generated_at`: ISO 8601 时间字符串
-
-### quota.window_5h / quota.window_7d
-- `remaining_percent`: 数值，0-100
-- `used_percent`: 数值，0-100
-- `status`: `healthy | warning | danger`
-
-### collector
-- `status`: `ok | warning | error`
-- `message`: 字符串
-- `last_run_at`: ISO 8601 时间字符串
-
-### recent_runs
-- 最多保留最近 3-10 条即可
-- 每项字段：
-  - `id`
-  - `status`
-  - `finished_at`
-
-### errors
-- 正常时为空数组
-- 错误时可放字符串数组或错误对象数组，V1 先建议字符串数组
-
 ## V1 最小落地建议
 
-1. Ubuntu 采集器生成：`collector/openai-usage.latest.json`
+1. 先让采集器输出账号池 JSON 到：`collector/openai-usage.latest.json`
 2. 发布前脚本复制到：`public/api/openai-usage.json`
-3. 执行 `wrangler pages deploy public --project-name alexstudio-web`
+3. 执行：`bash scripts/deploy-pages.sh`
 
-## 结果
+## 当前主线判断
 
-这样真实接入后：
-- 前端代码无需重写
-- Pages 结构无需重做
-- mock JSON 可以直接被真实 JSON 替换
+最应该优先做的不是复杂后端，而是：
+- **先把账号池 5h / 7d 额度采集出来**
+- **按约定 JSON 落盘**
+- **直接替换当前 mock JSON**
 
+这样能最快把“演示版 dashboard”推进到“真实监控 dashboard”。
+
+## 当前已落地脚手架
+
+- `collector/generate_usage_json.py`
+
+当前该脚本先生成 **账号池监控 JSON 雏形**，后续只需要把账号采集逻辑替换进去即可。
+
+### 当前运行方式
+
+```bash
+python3 collector/generate_usage_json.py
+```
+
+### 当前输出
+
+```bash
+collector/openai-usage.latest.json
+```
+
+## Snapshot 解析输入（当前已支持）
+
+当前采集器已支持解析与 `Codex-Manager` 同口径的原始 snapshot 结构，例如：
+
+```json
+{
+  "rate_limit": {
+    "primary_window": {
+      "used_percent": 31.6,
+      "window_minutes": 300,
+      "resets_at": 1774627200
+    },
+    "secondary_window": {
+      "used_percent": 25.9,
+      "window_minutes": 10080,
+      "resets_at": 1774886400
+    }
+  }
+}
+```
+
+当前测试样例文件：
+- `collector/sample_usage_snapshot.json`
+
+后续只要把真实抓取结果落成这个结构，采集器就能自动产出 `collector/openai-usage.latest.json`。

@@ -37,3 +37,10 @@
 - Ubuntu 采集器输出标准 JSON
 - 直接替换 `public/api/openai-usage.json`
 - 前端无需重写即可切换到真实数据
+
+## 账号池监控（V2）
+- 展示账号池总账号数 / 可用账号数
+- 展示每个账号的 5h 剩余额度
+- 展示每个账号的 7d 剩余额度
+- 展示 5h / 7d 重置时间
+- 展示账号状态：ok / warning / danger / unavailable

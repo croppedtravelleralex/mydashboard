@@ -6,42 +6,68 @@
 
 - **`GET /api/openai-usage`**
 
-该接口用于给 `/dashboard/` 页面提供 OpenAI / ChatGPT Team 额度展示数据。
+该接口用于给 `/dashboard/` 页面提供 ChatGPT / OpenAI 账号池的 **5h / 7d 可用额度监控** 数据。
 
-## 返回结构（V1 草案）
+## 借鉴范围说明
+
+本项目参考 `qxcnm/Codex-Manager` 的仅限于：
+- 账号池监控视角
+- 5 小时额度
+- 7 天周期额度
+- 剩余百分比 / 已使用百分比
+- 重置时间
+
+**不照搬**：
+- 其完整账户管理系统
+- 聚合 API / Key 管理
+- 复杂后台与服务治理逻辑
+
+## 返回结构（V2：账号池监控版）
 
 ```json
 {
   "ok": true,
   "source": "ubuntu-collector",
   "generated_at": "2026-03-27T20:20:00+08:00",
-  "quota": {
-    "window_5h": {
-      "remaining_percent": 68.4,
-      "used_percent": 31.6,
-      "status": "healthy"
-    },
-    "window_7d": {
-      "remaining_percent": 74.1,
-      "used_percent": 25.9,
-      "status": "healthy"
+  "summary": {
+    "account_count": 3,
+    "available_count": 2,
+    "warning_count": 1,
+    "danger_count": 0,
+    "avg_5h_remaining_percent": 68.4,
+    "avg_7d_remaining_percent": 74.1
+  },
+  "accounts": [
+    {
+      "id": "account-001",
+      "name": "team-account-a",
+      "status": "ok",
+      "captured_at": "2026-03-27T20:18:43+08:00",
+      "quota": {
+        "window_5h": {
+          "remaining_percent": 68.4,
+          "used_percent": 31.6,
+          "resets_at": "2026-03-27T23:40:00+08:00",
+          "status": "healthy"
+        },
+        "window_7d": {
+          "remaining_percent": 74.1,
+          "used_percent": 25.9,
+          "resets_at": "2026-03-30T00:00:00+08:00",
+          "status": "healthy"
+        }
+      },
+      "collector": {
+        "status": "ok",
+        "message": "collector finished successfully"
+      }
     }
-  },
-  "collector": {
-    "status": "ok",
-    "message": "collector finished successfully",
-    "last_run_at": "2026-03-27T20:18:43+08:00"
-  },
+  ],
   "recent_runs": [
     {
       "id": "collector-run-001",
       "status": "success",
       "finished_at": "2026-03-27T20:18:43+08:00"
-    },
-    {
-      "id": "collector-run-002",
-      "status": "success",
-      "finished_at": "2026-03-27T20:03:12+08:00"
     }
   ],
   "errors": []
@@ -55,21 +81,30 @@
 - `source`：数据来源，当前预期为 `ubuntu-collector`
 - `generated_at`：接口生成时间
 
-### quota.window_5h / quota.window_7d
-- `remaining_percent`：剩余额度百分比
-- `used_percent`：已使用额度百分比
-- `status`：额度状态
-  - `healthy`
-  - `warning`
-  - `danger`
+### summary
+- `account_count`：账号总数
+- `available_count`：当前可用账号数
+- `warning_count`：额度告警账号数
+- `danger_count`：危险账号数
+- `avg_5h_remaining_percent`：账号池 5h 平均剩余额度
+- `avg_7d_remaining_percent`：账号池 7d 平均剩余额度
 
-### collector
-- `status`：采集器状态
-  - `ok`
-  - `warning`
-  - `error`
-- `message`：采集器状态说明
-- `last_run_at`：最近成功或最近一次执行时间
+### accounts[]
+每个账号一条记录，V2 重点字段：
+- `id`
+- `name`
+- `status`：`ok | warning | danger | unavailable`
+- `captured_at`
+
+### accounts[].quota.window_5h / window_7d
+- `remaining_percent`：剩余额度百分比
+- `used_percent`：已使用百分比
+- `resets_at`：重置时间
+- `status`：`healthy | warning | danger`
+
+### accounts[].collector
+- `status`：`ok | warning | error`
+- `message`：采集说明
 
 ### recent_runs
 - 最近几次采集任务简表，供前端直接展示
@@ -80,21 +115,22 @@
 
 ## 前端使用规则
 
-- `/dashboard/` 首屏直接请求 `GET /api/openai-usage`
-- 若 `ok=false`：
-  - 页面显示错误态
-  - 仍展示最近更新时间与错误信息
-- 若 `collector.status=warning|error`：
-  - 页面顶部状态组件显示告警
+### V1（当前页）
+当前 `/dashboard/` 页面先展示：
+- 整体摘要
+- 默认主账号 / 主视图的 5h 与 7d 额度
+- 最近采集记录
 
-## V1 决策
+### V2（下一步）
+页面扩展为账号池监控：
+- 账号列表
+- 每个账号 5h 剩余额度
+- 每个账号 7d 剩余额度
+- 重置时间
+- 当前状态颜色
 
-- V1 先只做 **只读接口**，不做写操作
-- V1 先只支持 **单账号视图**
-- V1 先只覆盖：
-  - `5h` 额度
-  - `7d` 额度
-  - 采集器状态
-  - 最近采集记录
-- 复杂趋势图和多账号留到后续阶段
+## V2 决策
 
+- 以**账号池监控**为核心，而不是单账号静态展示
+- 保留当前静态 JSON / mock JSON / 真接口三层兼容结构
+- Ubuntu 采集器最终只要产出该 JSON 结构，前端即可接入
