@@ -56,7 +56,7 @@
     .fill { height:100%; border-radius:inherit; background:linear-gradient(90deg, var(--cyan), var(--blue)); width:0%; transition:width .6s ease; }
     .footnote { margin-top:16px; color:var(--muted); font-size:12px; }
     .mono { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .source-badge { display:inline-flex; margin-top:10px; margin-right:8px; padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid var(--line); color:var(--muted); }
+    .source-badge { display:inline-flex; margin-top:10px; margin-right:8px; padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid var(--line); color:var(--muted); max-width:100%; word-break:break-word; }
     table { width:100%; border-collapse:collapse; margin-top:14px; }
     th, td { padding:12px 10px; text-align:left; border-bottom:1px solid rgba(255,255,255,.08); font-size:13px; }
     th { color:var(--muted); font-weight:600; }
@@ -67,7 +67,7 @@
     .pill.ok { background:rgba(52,211,153,.14); color:#86efac; }
     .pill.warning { background:rgba(245,158,11,.14); color:#fcd34d; }
     .pill.danger, .pill.unavailable { background:rgba(251,113,133,.14); color:#fda4af; }
-    @media (max-width: 980px) { .metric, .half { grid-column:span 12; } .tinybar { width:88px; } .wrap { width:min(100%, calc(100% - 20px)); padding:20px 0 40px; } .card { padding:14px; border-radius:16px; } th, td { padding:10px 8px; font-size:12px; } .row { padding:10px 12px; } .actions { width:100%; } .actions .btn { flex:1 1 auto; text-align:center; } .brand p { line-height:1.6; } }
+    @media (max-width: 980px) { .metric, .half { grid-column:span 12; } .tinybar { width:72px; } .wrap { width:min(100%, calc(100% - 20px)); padding:20px 0 40px; } .card { padding:14px; border-radius:16px; overflow-x:auto; } th, td { padding:10px 8px; font-size:12px; white-space:nowrap; } .row { padding:10px 12px; } .actions { width:100%; } .actions .btn { flex:1 1 auto; text-align:center; } .brand p { line-height:1.6; } table { min-width: 760px; } }
   </style>
 </head>
 <body>
@@ -78,6 +78,7 @@
         <p id="pageDesc">账号池 5h / 7d 可用额度监控。优先读取真实 `/api/openai-usage`，其次 mock JSON，最后才回退演示数据。</p>
         <div class="source-badge" id="sourceBadge">数据源：等待加载</div>
         <div class="source-badge" id="countdownBadge">下次刷新：--</div>
+        <div class="source-badge" id="lastRefreshBadge">刷新结果：等待首次刷新</div>
       </div>
       <div class="actions">
         <a class="btn" href="/">返回首页</a>
@@ -255,6 +256,7 @@
       const used5 = 100 - avg5;
       const used7 = 100 - avg7;
       const poolStatus = dangerCount > 0 ? 'danger' : warningCount > 0 ? 'warning' : 'ok';
+      const lastRefreshBadge = document.getElementById('lastRefreshBadge');
       document.getElementById('accountCount').textContent = accountCount;
       document.getElementById('availableCount').textContent = availableCount;
       document.getElementById('avg5h').textContent = formatPercent(avg5);
@@ -274,6 +276,10 @@
       document.getElementById('updatedAt').textContent = formatTime(payload?.generated_at);
       document.getElementById('sourceBadge').textContent = `数据源：${payload?.source || mode}`;
       document.getElementById('modeText').textContent = mode === 'api' ? '真实接口读取成功' : mode === 'mock-json' ? '静态 mock JSON 已接管展示' : '接口不可用，已回退演示数据';
+      if (lastRefreshBadge) {
+        const statusText = mode === 'api' ? '成功（真实接口）' : mode === 'mock-json' ? '成功（mock JSON）' : '成功（演示兜底）';
+        lastRefreshBadge.textContent = `刷新结果：${statusText} · ${formatTime(new Date())}`;
+      }
       const pool = document.getElementById('poolStatus');
       pool.className = `status ${mapStateClass(poolStatus)}`;
       pool.textContent = mapStateText(poolStatus);
@@ -306,6 +312,8 @@
         return 'mock-json';
       } catch (err) {
         console.warn('api + mock json failed, fallback to demo data:', err);
+        const badge = document.getElementById('lastRefreshBadge');
+        if (badge) badge.textContent = `刷新结果：接口失败，已回退 demo · ${formatTime(new Date())}`;
         renderPayload(buildDemoPayload(), 'demo');
         return 'demo';
       }
@@ -345,9 +353,13 @@
       renderCountdown();
     }
     document.getElementById('refreshBtn').addEventListener('click', async () => {
-      document.getElementById('refreshBtn').disabled = true;
-      const originalText = document.getElementById('refreshBtn').textContent;
-      document.getElementById('refreshBtn').textContent = '刷新中...';
+      const btn = document.getElementById('refreshBtn');
+      const badge = document.getElementById('lastRefreshBadge');
+      btn.disabled = true;
+      const originalText = btn.textContent;
+      btn.textContent = '刷新中...';
+      if (badge) badge.textContent = `刷新结果：正在手动刷新 · ${formatTime(new Date())}`;
+      const startedAt = Date.now();
       try {
         await loadUsageData(false);
         if (autoRefreshEnabled) {
@@ -355,8 +367,12 @@
           renderCountdown();
         }
       } finally {
-        document.getElementById('refreshBtn').disabled = false;
-        document.getElementById('refreshBtn').textContent = originalText;
+        const elapsed = Date.now() - startedAt;
+        if (elapsed < 800) {
+          await new Promise(resolve => setTimeout(resolve, 800 - elapsed));
+        }
+        btn.disabled = false;
+        btn.textContent = originalText;
       }
     });
     document.getElementById('autoRefreshBtn').addEventListener('click', () => {
