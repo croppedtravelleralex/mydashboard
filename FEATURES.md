@@ -53,3 +53,6 @@
 - 本机立即采集触发器（localhost + token）
 
 - Pages Functions 代理“立即采集”与状态轮询
+
+- 真实 recent_runs 采集历史
+- 本次采集后数据是否变化提示

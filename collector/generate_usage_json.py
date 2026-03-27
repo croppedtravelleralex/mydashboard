@@ -10,6 +10,9 @@ OUT = ROOT / 'collector' / 'openai-usage.latest.json'
 SNAPSHOT_DIR = ROOT / 'collector' / 'snapshots'
 SAMPLE_SNAPSHOT = ROOT / 'collector' / 'sample_usage_snapshot.json'
 SANITIZED_ACCOUNTS = ROOT / 'collector' / 'accounts_export.sanitized.json'
+TRIGGER_STATE = ROOT / 'logs' / 'collector-trigger-state.json'
+TRIGGER_RUNS = ROOT / 'logs' / 'collector-trigger-runs.json'
+PREVIOUS_OUT = ROOT / 'public' / 'api' / 'openai-usage.json'
 
 
 def now_local() -> datetime:
@@ -148,6 +151,35 @@ def summarize_accounts(accounts):
     }
 
 
+
+def load_optional_json(path: Path, default):
+    if path.exists():
+        try:
+            return json.loads(path.read_text(encoding='utf-8'))
+        except Exception:
+            return default
+    return default
+
+
+def build_recent_runs():
+    runs = load_optional_json(TRIGGER_RUNS, [])
+    if isinstance(runs, list) and runs:
+        return runs[:10]
+    return [{'id': 'collector-run-bootstrap', 'status': 'success', 'finished_at': iso_now()}]
+
+
+def compute_change_summary(summary):
+    prev = load_optional_json(PREVIOUS_OUT, {})
+    prev_summary = prev.get('summary') if isinstance(prev, dict) else {}
+    if not isinstance(prev_summary, dict) or not prev_summary:
+        return {'changed': True, 'reason': 'first_comparison'}
+    keys = ['account_count', 'available_count', 'warning_count', 'danger_count', 'avg_5h_remaining_percent', 'avg_7d_remaining_percent']
+    diffs = {}
+    for key in keys:
+        if prev_summary.get(key) != summary.get(key):
+            diffs[key] = {'before': prev_summary.get(key), 'after': summary.get(key)}
+    return {'changed': bool(diffs), 'diffs': diffs}
+
 def collect_snapshot_files():
     files = []
     if SNAPSHOT_DIR.exists():
@@ -162,15 +194,16 @@ def main():
     accounts_meta = load_sanitized_accounts()
     accounts = [build_account_from_snapshot(path, accounts_meta, idx) for idx, path in enumerate(snapshot_files)]
     now = iso_now()
+    summary = summarize_accounts(accounts)
     payload = {
         'ok': True,
         'source': 'ubuntu-collector-real-snapshots',
         'generated_at': now,
-        'summary': summarize_accounts(accounts),
+        'summary': summary,
+        'change_summary': compute_change_summary(summary),
+        'trigger_state': load_optional_json(TRIGGER_STATE, {}),
         'accounts': accounts,
-        'recent_runs': [
-            {'id': 'collector-run-001', 'status': 'success', 'finished_at': now}
-        ],
+        'recent_runs': build_recent_runs(),
         'errors': []
     }
     OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

@@ -79,6 +79,7 @@
         <div class="source-badge" id="sourceBadge">数据源：等待加载</div>
         <div class="source-badge" id="countdownBadge">下次刷新：--</div>
         <div class="source-badge" id="lastRefreshBadge">刷新结果：等待首次刷新</div>
+        <div class="source-badge" id="changeBadge">数据变化：等待加载</div>
       </div>
       <div class="actions">
         <a class="btn" href="/">返回首页</a>
@@ -284,6 +285,9 @@
       document.getElementById('modeText').textContent = mode === 'api' ? '已重新读取当前静态结果' : mode === 'mock-json' ? '已重新读取当前静态结果（mock JSON）' : '接口不可用，已回退演示数据';
       const collectModeText = document.getElementById('collectModeText');
       if (collectModeText) collectModeText.textContent = 'Pages Functions 代理';
+      const changeBadge = document.getElementById('changeBadge');
+      const changeSummary = payload?.change_summary || {};
+      if (changeBadge) changeBadge.textContent = changeSummary.changed ? '数据变化：本次有更新' : '数据变化：本次无变化';
       if (lastRefreshBadge) {
         const statusText = mode === 'api' ? '显示已刷新（当前静态结果）' : mode === 'mock-json' ? '显示已刷新（mock JSON）' : '成功（演示兜底）';
         lastRefreshBadge.textContent = `刷新结果：${statusText} · ${formatTime(new Date())}`;

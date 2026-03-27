@@ -153,3 +153,6 @@
 - `POST /api/collect-now`：由 Pages Functions 代理到 trigger 的 `/collect-now`
 - `GET /api/collect-status`：由 Pages Functions 代理到 trigger 的 `/status`
 - Cloudflare 侧需要配置环境变量：`COLLECT_TRIGGER_URL`、`COLLECT_TRIGGER_TOKEN`、`DASHBOARD_ALLOWED_ORIGIN`。
+
+- `change_summary`：本次汇总相对上次发布结果是否有变化，以及差异字段。
+- `recent_runs`：读取 `logs/collector-trigger-runs.json` 的真实采集历史。

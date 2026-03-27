@@ -54,3 +54,6 @@
 - [x] Pages Functions 代理层（collect-now / collect-status）
 - [ ] Cloudflare Pages 环境变量配置
 - [ ] 前端真接线后的线上联调
+
+- [x] recent_runs 改为真实 trigger 历史
+- [x] 页面显示“本次数据是否变化”

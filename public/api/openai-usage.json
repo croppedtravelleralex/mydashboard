@@ -1,32 +1,46 @@
 {
   "ok": true,
   "source": "ubuntu-collector-real-snapshots",
-  "generated_at": "2026-03-27T21:09:11+08:00",
+  "generated_at": "2026-03-27T22:50:33+08:00",
   "summary": {
     "account_count": 5,
     "available_count": 5,
     "warning_count": 0,
     "danger_count": 0,
-    "avg_5h_remaining_percent": 99.4,
-    "avg_7d_remaining_percent": 98.0
+    "avg_5h_remaining_percent": 91.0,
+    "avg_7d_remaining_percent": 95.4
+  },
+  "change_summary": {
+    "changed": false,
+    "diffs": {}
+  },
+  "trigger_state": {
+    "running": true,
+    "last_started_at": "2026-03-27T22:50:27+08:00",
+    "last_finished_at": null,
+    "last_status": "running",
+    "last_exit_code": null,
+    "last_error": null,
+    "last_stdout_tail": "",
+    "last_stderr_tail": ""
   },
   "accounts": [
     {
       "id": "account-001",
       "name": "vekilovwdye95@outlook.com",
       "status": "ok",
-      "captured_at": "2026-03-27T21:09:11+08:00",
+      "captured_at": "2026-03-27T22:50:33+08:00",
       "workspace_id": "org-xsaG3E8JsFcrOqlGfvLP04Zj",
       "quota": {
         "window_5h": {
-          "remaining_percent": 97.0,
-          "used_percent": 3.0,
+          "remaining_percent": 55.0,
+          "used_percent": 45.0,
           "resets_at": "2026-03-28T01:33:18+08:00",
           "status": "healthy"
         },
         "window_7d": {
-          "remaining_percent": 90.0,
-          "used_percent": 10.0,
+          "remaining_percent": 77.0,
+          "used_percent": 23.0,
           "resets_at": "2026-04-03T10:10:44+08:00",
           "status": "healthy"
         }
@@ -40,19 +54,19 @@
       "id": "account-002",
       "name": "mehrnakatwal77@outlook.com",
       "status": "ok",
-      "captured_at": "2026-03-27T21:09:11+08:00",
+      "captured_at": "2026-03-27T22:50:33+08:00",
       "workspace_id": "org-ByoawYb6zFQwLxyRjGlJIIJ9",
       "quota": {
         "window_5h": {
           "remaining_percent": 100.0,
           "used_percent": 0.0,
-          "resets_at": "2026-03-28T01:51:33+08:00",
+          "resets_at": "2026-03-28T03:50:29+08:00",
           "status": "healthy"
         },
         "window_7d": {
           "remaining_percent": 100.0,
           "used_percent": 0.0,
-          "resets_at": "2026-04-03T20:51:33+08:00",
+          "resets_at": "2026-04-03T22:50:29+08:00",
           "status": "healthy"
         }
       },
@@ -65,19 +79,19 @@
       "id": "account-003",
       "name": "tinocayalama33@outlook.com",
       "status": "ok",
-      "captured_at": "2026-03-27T21:09:11+08:00",
+      "captured_at": "2026-03-27T22:50:33+08:00",
       "workspace_id": "org-ZE6sI8mqnk2fbtzA07qBZD4g",
       "quota": {
         "window_5h": {
           "remaining_percent": 100.0,
           "used_percent": 0.0,
-          "resets_at": "2026-03-28T01:51:36+08:00",
+          "resets_at": "2026-03-28T03:50:29+08:00",
           "status": "healthy"
         },
         "window_7d": {
           "remaining_percent": 100.0,
           "used_percent": 0.0,
-          "resets_at": "2026-04-03T20:51:36+08:00",
+          "resets_at": "2026-04-03T22:50:29+08:00",
           "status": "healthy"
         }
       },
@@ -90,19 +104,19 @@
       "id": "account-004",
       "name": "jegshaamdi1995@outlook.com",
       "status": "ok",
-      "captured_at": "2026-03-27T21:09:11+08:00",
+      "captured_at": "2026-03-27T22:50:33+08:00",
       "workspace_id": "org-lfEHLilUVb628TS9Lrp3nb8L",
       "quota": {
         "window_5h": {
           "remaining_percent": 100.0,
           "used_percent": 0.0,
-          "resets_at": "2026-03-28T01:51:39+08:00",
+          "resets_at": "2026-03-28T03:50:30+08:00",
           "status": "healthy"
         },
         "window_7d": {
           "remaining_percent": 100.0,
           "used_percent": 0.0,
-          "resets_at": "2026-04-03T20:51:39+08:00",
+          "resets_at": "2026-04-03T22:50:30+08:00",
           "status": "healthy"
         }
       },
@@ -115,19 +129,19 @@
       "id": "account-005",
       "name": "alexstudio.site@chihuolingrang.de5.net",
       "status": "ok",
-      "captured_at": "2026-03-27T21:09:11+08:00",
+      "captured_at": "2026-03-27T22:50:33+08:00",
       "workspace_id": "org-nGywtOYZwKbaoLkuANAvIdws",
       "quota": {
         "window_5h": {
           "remaining_percent": 100.0,
           "used_percent": 0.0,
-          "resets_at": "2026-03-28T01:51:44+08:00",
+          "resets_at": "2026-03-28T03:50:33+08:00",
           "status": "healthy"
         },
         "window_7d": {
           "remaining_percent": 100.0,
           "used_percent": 0.0,
-          "resets_at": "2026-04-03T20:51:44+08:00",
+          "resets_at": "2026-04-03T22:50:33+08:00",
           "status": "healthy"
         }
       },
@@ -139,9 +153,20 @@
   ],
   "recent_runs": [
     {
-      "id": "collector-run-001",
+      "id": "collector-run-20260327144913",
       "status": "success",
-      "finished_at": "2026-03-27T21:09:11+08:00"
+      "started_at": "2026-03-27T22:49:13+08:00",
+      "finished_at": "2026-03-27T22:49:32+08:00",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "id": "collector-run-20260327144737",
+      "status": "success",
+      "started_at": "2026-03-27T22:47:37+08:00",
+      "finished_at": "2026-03-27T22:47:55+08:00",
+      "exit_code": 0,
+      "error": null
     }
   ],
   "errors": []
