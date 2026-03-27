@@ -292,30 +292,39 @@
       if (!res.ok) throw new Error(`${url} -> HTTP ${res.status}`);
       return await res.json();
     }
-    async function loadUsageData(forceDemo = false) {
+    async function loadUsageData(forceDemo = false, options = {}) {
+      const suppressBadge = Boolean(options.suppressBadge);
       if (forceDemo) {
+        if (suppressBadge) {
+          return { mode: 'demo', payload: buildDemoPayload() };
+        }
         renderPayload(buildDemoPayload(), 'demo');
-        return 'demo';
+        return { mode: 'demo', payload: buildDemoPayload() };
       }
       try {
         try {
           const payload = await tryFetchJson('/api/openai-usage');
           if (!payload || payload.ok === false) throw new Error('API returned error state');
+          if (suppressBadge) return { mode: 'api', payload };
           renderPayload(payload, 'api');
-          return 'api';
+          return { mode: 'api', payload };
         } catch (firstErr) {
           console.warn('primary api fetch failed:', firstErr);
         }
         const payload = await tryFetchJson('/api/openai-usage.json');
         if (!payload || payload.ok === false) throw new Error('mock json returned error state');
+        if (suppressBadge) return { mode: 'mock-json', payload };
         renderPayload(payload, 'mock-json');
-        return 'mock-json';
+        return { mode: 'mock-json', payload };
       } catch (err) {
         console.warn('api + mock json failed, fallback to demo data:', err);
-        const badge = document.getElementById('lastRefreshBadge');
-        if (badge) badge.textContent = `刷新结果：接口失败，已回退 demo · ${formatTime(new Date())}`;
-        renderPayload(buildDemoPayload(), 'demo');
-        return 'demo';
+        const payload = buildDemoPayload();
+        if (!suppressBadge) {
+          const badge = document.getElementById('lastRefreshBadge');
+          if (badge) badge.textContent = `刷新结果：接口失败，已回退 demo · ${formatTime(new Date())}`;
+          renderPayload(payload, 'demo');
+        }
+        return { mode: 'demo', payload };
       }
     }
     let autoRefreshEnabled = true;
@@ -361,16 +370,18 @@
       if (badge) badge.textContent = `刷新结果：正在手动刷新 · ${formatTime(new Date())}`;
       const startedAt = Date.now();
       try {
-        await loadUsageData(false);
+        const result = await loadUsageData(false, { suppressBadge: true });
+        const elapsed = Date.now() - startedAt;
+        const minVisibleMs = 1500;
+        if (elapsed < minVisibleMs) {
+          await new Promise(resolve => setTimeout(resolve, minVisibleMs - elapsed));
+        }
+        renderPayload(result.payload, result.mode);
         if (autoRefreshEnabled) {
           secondsUntilRefresh = 60;
           renderCountdown();
         }
       } finally {
-        const elapsed = Date.now() - startedAt;
-        if (elapsed < 800) {
-          await new Promise(resolve => setTimeout(resolve, 800 - elapsed));
-        }
         btn.disabled = false;
         btn.textContent = originalText;
       }
