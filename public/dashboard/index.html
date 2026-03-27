@@ -243,8 +243,12 @@
       for (const item of items.slice(0, 8)) {
         const row = document.createElement('div');
         row.className = 'row';
-        const keys = Object.keys(item.diffs || {});
-        row.innerHTML = `<span>${maskName(item.name || 'unknown')}</span><span>${item.type === 'new_account' ? '新账号' : keys.join(', ')}</span>`;
+        if (item.type === 'new_account') {
+          row.innerHTML = `<span>${maskName(item.name || 'unknown')}</span><span>新账号</span>`;
+        } else {
+          const diffParts = Object.entries(item.diffs || {}).slice(0, 3).map(([k, v]) => `${k}: ${v.before} → ${v.after}`);
+          row.innerHTML = `<span>${maskName(item.name || 'unknown')}</span><span>${diffParts.join(' | ') || '有变化'}</span>`;
+        }
         list.appendChild(row);
       }
     }
