@@ -3,3 +3,5 @@
 collector/private/
 collector/*.latest.json
 collector/snapshots/
+private/
+logs/

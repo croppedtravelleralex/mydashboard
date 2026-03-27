@@ -83,6 +83,7 @@
       <div class="actions">
         <a class="btn" href="/">返回首页</a>
         <button class="btn primary" id="refreshBtn">刷新显示</button>
+        <button class="btn" id="collectBtn">立即采集</button>
         <button class="btn" id="autoRefreshBtn">自动刷新：开启</button>
       </div>
     </div>
@@ -112,6 +113,7 @@
           <div class="row"><span>当前模式</span><span id="modeText">等待加载</span></div>
           <div class="row"><span>部署方式</span><span>Cloudflare Pages</span></div>
           <div class="row"><span>当前主线</span><span>账号池监控</span></div>
+          <div class="row"><span>立即采集入口</span><span id="collectModeText">待接线</span></div>
           <div class="row"><span>页面自动刷新</span><span id="autoRefreshText">60 秒</span></div>
         </div>
       </section>
@@ -280,6 +282,8 @@
       document.getElementById('nextCollectAt').textContent = nextCollectAt ? formatTime(nextCollectAt) : '--';
       document.getElementById('sourceBadge').textContent = `数据源：${payload?.source || mode}`;
       document.getElementById('modeText').textContent = mode === 'api' ? '已重新读取当前静态结果' : mode === 'mock-json' ? '已重新读取当前静态结果（mock JSON）' : '接口不可用，已回退演示数据';
+      const collectModeText = document.getElementById('collectModeText');
+      if (collectModeText) collectModeText.textContent = 'Pages Functions 代理';
       if (lastRefreshBadge) {
         const statusText = mode === 'api' ? '显示已刷新（当前静态结果）' : mode === 'mock-json' ? '显示已刷新（mock JSON）' : '成功（演示兜底）';
         lastRefreshBadge.textContent = `刷新结果：${statusText} · ${formatTime(new Date())}`;
@@ -295,6 +299,43 @@
       const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) throw new Error(`${url} -> HTTP ${res.status}`);
       return await res.json();
+    }
+
+    async function postJson(url) {
+      const res = await fetch(url, { method: 'POST', cache: 'no-store' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || `${url} -> HTTP ${res.status}`);
+      return data;
+    }
+    async function fetchCollectStatus() {
+      const res = await fetch('/api/collect-status', { cache: 'no-store' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || `collect-status -> HTTP ${res.status}`);
+      return data;
+    }
+    async function pollCollectStatus() {
+      const badge = document.getElementById('lastRefreshBadge');
+      const collectBtn = document.getElementById('collectBtn');
+      for (let i = 0; i < 90; i++) {
+        const data = await fetchCollectStatus();
+        const state = data?.state || {};
+        if (state.running) {
+          if (badge) badge.textContent = `刷新结果：正在立即采集 · ${formatTime(new Date())}`;
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          continue;
+        }
+        if (state.last_status === 'success') {
+          if (badge) badge.textContent = `刷新结果：立即采集成功 · ${formatTime(new Date())}`;
+          await loadUsageData(false);
+        } else if (state.last_status === 'failed') {
+          if (badge) badge.textContent = `刷新结果：立即采集失败 · ${formatTime(new Date())}`;
+        }
+        if (collectBtn) collectBtn.disabled = false;
+        if (collectBtn) collectBtn.textContent = '立即采集';
+        return;
+      }
+      if (collectBtn) collectBtn.disabled = false;
+      if (collectBtn) collectBtn.textContent = '立即采集';
     }
     async function loadUsageData(forceDemo = false, options = {}) {
       const suppressBadge = Boolean(options.suppressBadge);
@@ -395,6 +436,23 @@
       syncAutoRefreshUi();
       startAutoRefresh();
     });
+    const collectBtn = document.getElementById('collectBtn');
+    if (collectBtn) {
+      collectBtn.addEventListener('click', async () => {
+        const badge = document.getElementById('lastRefreshBadge');
+        collectBtn.disabled = true;
+        collectBtn.textContent = '采集中...';
+        if (badge) badge.textContent = `刷新结果：正在请求立即采集 · ${formatTime(new Date())}`;
+        try {
+          await postJson('/api/collect-now');
+          await pollCollectStatus();
+        } catch (err) {
+          if (badge) badge.textContent = `刷新结果：立即采集请求失败 · ${formatTime(new Date())}`;
+          collectBtn.disabled = false;
+          collectBtn.textContent = '立即采集';
+        }
+      });
+    }
     syncAutoRefreshUi();
     startAutoRefresh();
     loadUsageData(false);

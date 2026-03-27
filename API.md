@@ -134,3 +134,22 @@
 - 以**账号池监控**为核心，而不是单账号静态展示
 - 保留当前静态 JSON / mock JSON / 真接口三层兼容结构
 - Ubuntu 采集器最终只要产出该 JSON 结构，前端即可接入
+
+
+## 立即采集入口（待接线）
+- 当前页面只支持“刷新显示”，不会直接触发重新采集。
+- 已新增本机一键采集脚本：`scripts/run-collector-once.sh`。
+- 下一步需要为该脚本补一个受控 HTTP / webhook 触发入口，再由页面调用。
+
+
+## Collector Trigger API
+- `GET http://127.0.0.1:18765/health`
+- `GET http://127.0.0.1:18765/status`
+- `POST http://127.0.0.1:18765/collect-now`
+- 鉴权：`Authorization: Bearer <token>` 或 `X-Collect-Token: <token>`
+- 当前仅监听 `127.0.0.1`，默认不对公网开放。
+
+## Pages Functions 代理
+- `POST /api/collect-now`：由 Pages Functions 代理到 trigger 的 `/collect-now`
+- `GET /api/collect-status`：由 Pages Functions 代理到 trigger 的 `/status`
+- Cloudflare 侧需要配置环境变量：`COLLECT_TRIGGER_URL`、`COLLECT_TRIGGER_TOKEN`、`DASHBOARD_ALLOWED_ORIGIN`。

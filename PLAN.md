@@ -39,3 +39,18 @@
 ## 本轮落地
 
 - [x] Dashboard 页面升级为账号池摘要 + 账号列表视图
+
+
+## 下一步：立即采集触发入口
+- [x] 新增本机一键采集脚本 `scripts/run-collector-once.sh`
+- [x] 页面预留“立即采集（待接线）”按钮
+- [ ] 补真实受控触发入口（HTTP / webhook）
+- [ ] 页面按钮直连真实触发入口
+
+- [x] 本机 localhost 立即采集触发器
+- [ ] 反向代理 / 公网受控入口
+- [ ] 页面“立即采集”按钮直连真实入口
+
+- [x] Pages Functions 代理层（collect-now / collect-status）
+- [ ] Cloudflare Pages 环境变量配置
+- [ ] 前端真接线后的线上联调
