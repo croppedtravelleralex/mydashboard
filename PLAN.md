@@ -17,18 +17,19 @@
 - [ ] 校验部署路径映射
 
 ### Phase 2：接入真实数据
-- [ ] 设计 `/api/openai-usage` 返回结构
-- [ ] 接 Ubuntu 采集器
+- [x] 设计 `/api/openai-usage` 返回结构
+- [x] 定义 Ubuntu 采集器输出契约
 - [ ] 前端拉取真实数据
 
 ### Phase 3：稳定化
+- [x] 自动发布脚本
 - [ ] 状态/错误处理
 - [ ] 更新时间显示
 - [ ] 阈值状态
 
 ## 当前最优先动作
 
-1. 校验 `public/` 结构是否满足正式部署
-2. 明确根路径与 `/dashboard/` 的映射
-3. 开始准备 API 占位接入
+1. [x] 做本地 mock endpoint 或静态 JSON
+2. 让 Ubuntu 采集器按契约产出 JSON
+3. 用真实 JSON 替换 mock JSON
 

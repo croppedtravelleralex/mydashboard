@@ -1,0 +1,40 @@
+{
+  "ok": true,
+  "source": "ubuntu-collector",
+  "generated_at": "2026-03-27T20:35:00+08:00",
+  "quota": {
+    "window_5h": {
+      "remaining_percent": 71.2,
+      "used_percent": 28.8,
+      "status": "healthy"
+    },
+    "window_7d": {
+      "remaining_percent": 64.9,
+      "used_percent": 35.1,
+      "status": "warning"
+    }
+  },
+  "collector": {
+    "status": "ok",
+    "message": "ubuntu collector sample output",
+    "last_run_at": "2026-03-27T20:34:12+08:00"
+  },
+  "recent_runs": [
+    {
+      "id": "collector-run-001",
+      "status": "success",
+      "finished_at": "2026-03-27T20:34:12+08:00"
+    },
+    {
+      "id": "collector-run-002",
+      "status": "success",
+      "finished_at": "2026-03-27T20:16:01+08:00"
+    },
+    {
+      "id": "collector-run-003",
+      "status": "warn",
+      "finished_at": "2026-03-27T19:58:44+08:00"
+    }
+  ],
+  "errors": []
+}

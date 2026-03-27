@@ -32,5 +32,7 @@ frontend/
 1. 看 `AI.md`
 2. 看 `PLAN.md`
 3. 看 `FEATURES.md`
-4. 再看 `public/` 与 `frontend/`
+4. 看 `API.md`
+5. 看 `COLLECTOR.md`
+6. 再看 `public/` 与 `frontend/`
 

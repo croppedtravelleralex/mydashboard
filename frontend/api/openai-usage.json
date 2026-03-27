@@ -1,0 +1,40 @@
+{
+  "ok": true,
+  "source": "static-mock-json",
+  "generated_at": "2026-03-27T20:30:00+08:00",
+  "quota": {
+    "window_5h": {
+      "remaining_percent": 72.8,
+      "used_percent": 27.2,
+      "status": "healthy"
+    },
+    "window_7d": {
+      "remaining_percent": 66.5,
+      "used_percent": 33.5,
+      "status": "healthy"
+    }
+  },
+  "collector": {
+    "status": "ok",
+    "message": "static mock endpoint loaded successfully",
+    "last_run_at": "2026-03-27T20:28:43+08:00"
+  },
+  "recent_runs": [
+    {
+      "id": "collector-run-001",
+      "status": "success",
+      "finished_at": "2026-03-27T20:28:43+08:00"
+    },
+    {
+      "id": "collector-run-002",
+      "status": "success",
+      "finished_at": "2026-03-27T20:12:19+08:00"
+    },
+    {
+      "id": "collector-run-003",
+      "status": "warn",
+      "finished_at": "2026-03-27T19:58:05+08:00"
+    }
+  ],
+  "errors": []
+}
