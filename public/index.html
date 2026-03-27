@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alex Studio</title>
+  <meta name="description" content="Alex Studio 正在上线中。" />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: rgba(255,255,255,0.08);
+      --line: rgba(255,255,255,0.12);
+      --text: #eef2ff;
+      --muted: #a7b0d6;
+      --accent: #7c9cff;
+      --accent2: #5eead4;
+      --buttonText: #08101f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(124,156,255,.28), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(94,234,212,.18), transparent 30%),
+        linear-gradient(160deg, #0b1020 0%, #111831 45%, #0a0f1f 100%);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .card {
+      width: min(920px, 100%);
+      border: 1px solid var(--line);
+      background: var(--card);
+      backdrop-filter: blur(16px);
+      border-radius: 28px;
+      padding: 40px;
+      box-shadow: 0 20px 80px rgba(0,0,0,.35);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(38px, 7vw, 72px);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+    }
+    p.lead {
+      margin: 18px 0 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 20px);
+      line-height: 1.7;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      background: rgba(255,255,255,0.04);
+    }
+    .item h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+    .item p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    .actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+    .button:hover {
+      transform: translateY(-1px);
+      opacity: .96;
+    }
+    .button-primary {
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      color: var(--buttonText);
+    }
+    .button-secondary {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: rgba(255,255,255,0.03);
+    }
+    .footer {
+      margin-top: 26px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .accent { color: var(--accent2); }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="badge">● alexstudio.top 已上线到 Cloudflare Pages</div>
+    <h1>Alex Studio</h1>
+    <p class="lead">一个正在搭建中的数字工作台。当前首页已经可部署上线，后续可以继续扩展为 <span class="accent">产品主页、个人品牌页、项目入口页</span>，或者邮件池与自动化系统的管理面板。</p>
+
+    <div class="actions">
+      <a class="button button-primary" href="/dashboard/">打开 Dashboard</a>
+      <a class="button button-secondary" href="#planned">查看规划方向</a>
+    </div>
+
+    <section class="grid" id="planned">
+      <article class="item">
+        <h3>Landing Page</h3>
+        <p>可继续扩展为介绍页、作品页、服务页或统一入口站点。</p>
+      </article>
+      <article class="item">
+        <h3>Mail Hub</h3>
+        <p>后续可接批量收件、邮件转发和规则处理系统。</p>
+      </article>
+      <article class="item">
+        <h3>Automation</h3>
+        <p>可挂接自动化任务、Webhook、API 与管理后台入口。</p>
+      </article>
+    </section>
+
+    <div class="footer">Built for alexstudio.top · 首页已可跳转到 Dashboard。</div>
+  </main>
+</body>
+</html>
