@@ -82,7 +82,7 @@
       </div>
       <div class="actions">
         <a class="btn" href="/">返回首页</a>
-        <button class="btn primary" id="refreshBtn">刷新</button>
+        <button class="btn primary" id="refreshBtn">刷新显示</button>
         <button class="btn" id="autoRefreshBtn">自动刷新：开启</button>
       </div>
     </div>
@@ -100,7 +100,8 @@
         <div class="list" style="margin-top:16px;">
           <div class="row"><span>warning 账号</span><span id="warningCount">--</span></div>
           <div class="row"><span>danger 账号</span><span id="dangerCount">--</span></div>
-          <div class="row"><span>最后更新时间</span><span id="updatedAt">--</span></div>
+          <div class="row"><span>上次采集时间</span><span id="updatedAt">--</span></div>
+          <div class="row"><span>预计下次自动采集</span><span id="nextCollectAt">--</span></div>
         </div>
       </section>
 
@@ -274,10 +275,13 @@
       document.getElementById('warningCount').textContent = warningCount;
       document.getElementById('dangerCount').textContent = dangerCount;
       document.getElementById('updatedAt').textContent = formatTime(payload?.generated_at);
+      const generatedAt = payload?.generated_at ? new Date(payload.generated_at) : null;
+      const nextCollectAt = generatedAt && !Number.isNaN(generatedAt.getTime()) ? new Date(generatedAt.getTime() + 30 * 60 * 1000) : null;
+      document.getElementById('nextCollectAt').textContent = nextCollectAt ? formatTime(nextCollectAt) : '--';
       document.getElementById('sourceBadge').textContent = `数据源：${payload?.source || mode}`;
-      document.getElementById('modeText').textContent = mode === 'api' ? '真实接口读取成功' : mode === 'mock-json' ? '静态 mock JSON 已接管展示' : '接口不可用，已回退演示数据';
+      document.getElementById('modeText').textContent = mode === 'api' ? '已重新读取当前静态结果' : mode === 'mock-json' ? '已重新读取当前静态结果（mock JSON）' : '接口不可用，已回退演示数据';
       if (lastRefreshBadge) {
-        const statusText = mode === 'api' ? '成功（真实接口）' : mode === 'mock-json' ? '成功（mock JSON）' : '成功（演示兜底）';
+        const statusText = mode === 'api' ? '显示已刷新（当前静态结果）' : mode === 'mock-json' ? '显示已刷新（mock JSON）' : '成功（演示兜底）';
         lastRefreshBadge.textContent = `刷新结果：${statusText} · ${formatTime(new Date())}`;
       }
       const pool = document.getElementById('poolStatus');
@@ -321,7 +325,7 @@
         const payload = buildDemoPayload();
         if (!suppressBadge) {
           const badge = document.getElementById('lastRefreshBadge');
-          if (badge) badge.textContent = `刷新结果：接口失败，已回退 demo · ${formatTime(new Date())}`;
+          if (badge) badge.textContent = `刷新结果：读取失败，已回退 demo · ${formatTime(new Date())}`;
           renderPayload(payload, 'demo');
         }
         return { mode: 'demo', payload };
@@ -366,8 +370,8 @@
       const badge = document.getElementById('lastRefreshBadge');
       btn.disabled = true;
       const originalText = btn.textContent;
-      btn.textContent = '刷新中...';
-      if (badge) badge.textContent = `刷新结果：正在手动刷新 · ${formatTime(new Date())}`;
+      btn.textContent = '读取中...';
+      if (badge) badge.textContent = `刷新结果：正在重新读取当前静态结果 · ${formatTime(new Date())}`;
       const startedAt = Date.now();
       try {
         const result = await loadUsageData(false, { suppressBadge: true });
