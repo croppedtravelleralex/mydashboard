@@ -156,3 +156,5 @@
 
 - `change_summary`：本次汇总相对上次发布结果是否有变化，以及差异字段。
 - `recent_runs`：读取 `logs/collector-trigger-runs.json` 的真实采集历史。
+
+- `account_change_summary`：账号级变化摘要，展示哪些账号的额度/状态/重置时间发生变化。

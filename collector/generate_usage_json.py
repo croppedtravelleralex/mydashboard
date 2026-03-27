@@ -180,6 +180,54 @@ def compute_change_summary(summary):
             diffs[key] = {'before': prev_summary.get(key), 'after': summary.get(key)}
     return {'changed': bool(diffs), 'diffs': diffs}
 
+
+def build_prev_account_map():
+    prev = load_optional_json(PREVIOUS_OUT, {})
+    accounts = prev.get('accounts') if isinstance(prev, dict) else []
+    mapping = {}
+    if isinstance(accounts, list):
+        for item in accounts:
+            if isinstance(item, dict):
+                key = item.get('workspace_id') or item.get('name') or item.get('id')
+                if key:
+                    mapping[key] = item
+    return mapping
+
+
+def compute_account_changes(accounts):
+    prev_map = build_prev_account_map()
+    changed_accounts = []
+    for item in accounts:
+        key = item.get('workspace_id') or item.get('name') or item.get('id')
+        prev = prev_map.get(key)
+        if not prev:
+            changed_accounts.append({
+                'name': item.get('name'),
+                'type': 'new_account',
+            })
+            continue
+        diffs = {}
+        fields = [
+            ('status', item.get('status'), prev.get('status')),
+            ('window_5h.remaining_percent', get_nested(item, 'quota', 'window_5h', 'remaining_percent'), get_nested(prev, 'quota', 'window_5h', 'remaining_percent')),
+            ('window_7d.remaining_percent', get_nested(item, 'quota', 'window_7d', 'remaining_percent'), get_nested(prev, 'quota', 'window_7d', 'remaining_percent')),
+            ('window_5h.resets_at', get_nested(item, 'quota', 'window_5h', 'resets_at'), get_nested(prev, 'quota', 'window_5h', 'resets_at')),
+            ('window_7d.resets_at', get_nested(item, 'quota', 'window_7d', 'resets_at'), get_nested(prev, 'quota', 'window_7d', 'resets_at')),
+        ]
+        for field, after, before in fields:
+            if before != after:
+                diffs[field] = {'before': before, 'after': after}
+        if diffs:
+            changed_accounts.append({
+                'name': item.get('name'),
+                'type': 'updated',
+                'diffs': diffs,
+            })
+    return {
+        'changed_count': len(changed_accounts),
+        'changed_accounts': changed_accounts[:10],
+    }
+
 def collect_snapshot_files():
     files = []
     if SNAPSHOT_DIR.exists():
@@ -201,6 +249,7 @@ def main():
         'generated_at': now,
         'summary': summary,
         'change_summary': compute_change_summary(summary),
+        'account_change_summary': compute_account_changes(accounts),
         'trigger_state': load_optional_json(TRIGGER_STATE, {}),
         'accounts': accounts,
         'recent_runs': build_recent_runs(),

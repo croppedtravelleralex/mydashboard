@@ -1,7 +1,7 @@
 {
   "ok": true,
   "source": "ubuntu-collector-real-snapshots",
-  "generated_at": "2026-03-27T22:50:33+08:00",
+  "generated_at": "2026-03-27T22:50:46+08:00",
   "summary": {
     "account_count": 5,
     "available_count": 5,
@@ -29,7 +29,7 @@
       "id": "account-001",
       "name": "vekilovwdye95@outlook.com",
       "status": "ok",
-      "captured_at": "2026-03-27T22:50:33+08:00",
+      "captured_at": "2026-03-27T22:50:46+08:00",
       "workspace_id": "org-xsaG3E8JsFcrOqlGfvLP04Zj",
       "quota": {
         "window_5h": {
@@ -54,7 +54,7 @@
       "id": "account-002",
       "name": "mehrnakatwal77@outlook.com",
       "status": "ok",
-      "captured_at": "2026-03-27T22:50:33+08:00",
+      "captured_at": "2026-03-27T22:50:46+08:00",
       "workspace_id": "org-ByoawYb6zFQwLxyRjGlJIIJ9",
       "quota": {
         "window_5h": {
@@ -79,7 +79,7 @@
       "id": "account-003",
       "name": "tinocayalama33@outlook.com",
       "status": "ok",
-      "captured_at": "2026-03-27T22:50:33+08:00",
+      "captured_at": "2026-03-27T22:50:46+08:00",
       "workspace_id": "org-ZE6sI8mqnk2fbtzA07qBZD4g",
       "quota": {
         "window_5h": {
@@ -104,7 +104,7 @@
       "id": "account-004",
       "name": "jegshaamdi1995@outlook.com",
       "status": "ok",
-      "captured_at": "2026-03-27T22:50:33+08:00",
+      "captured_at": "2026-03-27T22:50:46+08:00",
       "workspace_id": "org-lfEHLilUVb628TS9Lrp3nb8L",
       "quota": {
         "window_5h": {
@@ -129,7 +129,7 @@
       "id": "account-005",
       "name": "alexstudio.site@chihuolingrang.de5.net",
       "status": "ok",
-      "captured_at": "2026-03-27T22:50:33+08:00",
+      "captured_at": "2026-03-27T22:50:46+08:00",
       "workspace_id": "org-nGywtOYZwKbaoLkuANAvIdws",
       "quota": {
         "window_5h": {
@@ -152,6 +152,14 @@
     }
   ],
   "recent_runs": [
+    {
+      "id": "collector-run-20260327145027",
+      "status": "success",
+      "started_at": "2026-03-27T22:50:27+08:00",
+      "finished_at": "2026-03-27T22:50:46+08:00",
+      "exit_code": 0,
+      "error": null
+    },
     {
       "id": "collector-run-20260327144913",
       "status": "success",

@@ -57,3 +57,5 @@
 
 - [x] recent_runs 改为真实 trigger 历史
 - [x] 页面显示“本次数据是否变化”
+
+- [x] 账号级 diff 摘要

@@ -80,6 +80,7 @@
         <div class="source-badge" id="countdownBadge">下次刷新：--</div>
         <div class="source-badge" id="lastRefreshBadge">刷新结果：等待首次刷新</div>
         <div class="source-badge" id="changeBadge">数据变化：等待加载</div>
+        <div class="source-badge" id="accountChangeBadge">账号变化：等待加载</div>
       </div>
       <div class="actions">
         <a class="btn" href="/">返回首页</a>
@@ -140,6 +141,8 @@
       </section>
 
       <section class="card full"><div class="label">最近采集记录</div><div class="list" id="recentList"></div></section>
+
+      <section class="card full"><div class="label">账号级变化</div><div class="list" id="accountChangeList"></div></section>
     </div>
   </div>
 
@@ -223,6 +226,29 @@
         list.appendChild(row);
       }
     }
+
+    function renderAccountChanges(payload) {
+      const list = document.getElementById('accountChangeList');
+      if (!list) return;
+      list.innerHTML = '';
+      const summary = payload?.account_change_summary || {};
+      const items = Array.isArray(summary.changed_accounts) ? summary.changed_accounts : [];
+      if (!items.length) {
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.innerHTML = '<span>本次账号级 diff</span><span>无变化</span>';
+        list.appendChild(row);
+        return;
+      }
+      for (const item of items.slice(0, 8)) {
+        const row = document.createElement('div');
+        row.className = 'row';
+        const keys = Object.keys(item.diffs || {});
+        row.innerHTML = `<span>${maskName(item.name || 'unknown')}</span><span>${item.type === 'new_account' ? '新账号' : keys.join(', ')}</span>`;
+        list.appendChild(row);
+      }
+    }
+
     function renderAccounts(accounts) {
       const tbody = document.getElementById('accountsTable');
       tbody.innerHTML = '';
@@ -287,7 +313,10 @@
       if (collectModeText) collectModeText.textContent = 'Pages Functions 代理';
       const changeBadge = document.getElementById('changeBadge');
       const changeSummary = payload?.change_summary || {};
-      if (changeBadge) changeBadge.textContent = changeSummary.changed ? '数据变化：本次有更新' : '数据变化：本次无变化';
+      if (changeBadge) changeBadge.textContent = changeSummary.changed ? '数据变化：summary 有更新' : '数据变化：summary 无变化';
+      const accountChangeBadge = document.getElementById('accountChangeBadge');
+      const accountChangeSummary = payload?.account_change_summary || {};
+      if (accountChangeBadge) accountChangeBadge.textContent = `账号变化：${accountChangeSummary.changed_count || 0} 个账号有变化`; 
       if (lastRefreshBadge) {
         const statusText = mode === 'api' ? '显示已刷新（当前静态结果）' : mode === 'mock-json' ? '显示已刷新（mock JSON）' : '成功（演示兜底）';
         lastRefreshBadge.textContent = `刷新结果：${statusText} · ${formatTime(new Date())}`;
@@ -298,6 +327,7 @@
       document.getElementById('poolStatusSub').textContent = `账号池状态：${availableCount}/${accountCount} 可用，warning=${warningCount}，danger=${dangerCount}`;
       renderAccounts(payload?.accounts || []);
       renderRuns(payload?.recent_runs || []);
+      renderAccountChanges(payload);
     }
     async function tryFetchJson(url) {
       const res = await fetch(url, { cache: 'no-store' });
